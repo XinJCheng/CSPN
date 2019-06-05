@@ -36,12 +36,24 @@ This code was tested with Python 3 and PyTorch 0.4.0.
 
 ## Models
 
+The pretrained models, resnet18 and resnet50 can be downloaded here, and please put it into **pretrained** folder, if this folder doesnot exit, please run **mkdir pretrained** in root folder:
+- Resnet 18: [Pytorch model](https://drive.google.com/file/d/17adZHo5dkcU8_M_6OvYzGUTDguF6k-Qu/view?usp=sharing)
+- Resnet 50: [Pytorch model](https://drive.google.com/file/d/1-jSYATFPmyXoV0Qte6kLK-CD2nTtjNlD/view?usp=sharing)
+
 The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
-- NYU Depth V2: 
-- KITTI:
+- NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing)
+- KITTI: Pytorch model(coming soon)
 
 ## Results
 
 ## Citation
 
 If you use this method in your research, please cite:
+
+@inproceedings{cheng2018depth,
+  title={Depth estimation via affinity learned with convolutional spatial propagation network},
+  author={Cheng, Xinjing and Wang, Peng and Yang, Ruigang},
+  booktitle={Proceedings of the European Conference on Computer Vision (ECCV)},
+  pages={103--119},
+  year={2018}
+}
