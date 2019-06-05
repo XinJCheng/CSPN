@@ -3,9 +3,7 @@
 """
 Created on Mon Feb  5 16:19:25 2018
 
-@author: Xinjing Cheng
-@email : chengxinjing@baidu.com
-
+@author: norbot
 """
 
 import torch
@@ -26,7 +24,7 @@ def update_model(my_model, pretrained_dict):
 # dont know why my offline saved model has 'module.' in front of all key name
 def remove_moudle(remove_dict):
     for k, v in remove_dict.items():
-        if string.find(k, 'module')!=-1:
+        if 'module' in k :
             print("==> model dict with addtional module, remove it...")
             removed_dict = { k[7:]: v for k, v in remove_dict.items()}
         else:

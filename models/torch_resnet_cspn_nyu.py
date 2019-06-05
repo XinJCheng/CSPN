@@ -1,19 +1,15 @@
-#!/usr/bin/env python2
+0#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on Sat Feb  3 15:32:49 2018
 
-@author: Xinjing Cheng
-@email : chengxinjing@baidu.com
-
+@author: norbot
 """
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-import math
-import time
 import torch.utils.model_zoo as model_zoo
-import post_process as post_process
+import cspn as post_process
 from torch.autograd import Variable
 import update_model
 
@@ -169,6 +165,7 @@ class Simple_Gudi_UpConv_Block(nn.Module):
         if self.oheight !=0 and self.owidth !=0:
             x = x.narrow(2,0,self.oheight)
             x = x.narrow(3,0,self.owidth)
+#            x = x[:,:,0:self.oheight, 0:self.owidth].clone()
         mask = torch.zeros_like(x)
         for h in range(0, self.oheight, 2):
             for w in range(0, self.owidth, 2):
@@ -293,20 +290,30 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-
         self.mid_channel = 256*block.expansion
-        self.conv2 = nn.Conv2d(512*block.expansion, 512*block.expansion, kernel_size=3, stride=1, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(512*block.expansion, 512*block.expansion, kernel_size=3, 
+                               stride=1, padding=1, bias=False)
         self.bn2 = nn.BatchNorm2d(512*block.expansion)
+        self.up_proj_layer1 = self._make_up_conv_layer(up_proj_block, 
+                                                       self.mid_channel, 
+                                                       int(self.mid_channel/2))
+        self.up_proj_layer2 = self._make_up_conv_layer(up_proj_block, 
+                                                       int(self.mid_channel/2),
+                                                       int(self.mid_channel/4))
+        self.up_proj_layer3 = self._make_up_conv_layer(up_proj_block,
+                                                       int(self.mid_channel/4), 
+                                                       int(self.mid_channel/8))
+        self.up_proj_layer4 = self._make_up_conv_layer(up_proj_block, 
+                                                       int(self.mid_channel/8), 
+                                                       int(self.mid_channel/16))
         self.conv3 = nn.Conv2d(128, 1, kernel_size=3, stride=1, padding=1, bias=False)
-
         self.post_process_layer = self._make_post_process_layer()
-        
         self.gud_up_proj_layer1 = self._make_gud_up_conv_layer(Gudi_UpProj_Block, 2048, 1024, 15, 19)
         self.gud_up_proj_layer2 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 1024, 512, 29, 38)
         self.gud_up_proj_layer3 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 512, 256, 57, 76)
         self.gud_up_proj_layer4 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 256, 64, 114, 152)
         self.gud_up_proj_layer5 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 1, 228, 304)
-        self.gud_up_proj_layer6 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 8, 228, 304)
+        self.gud_up_proj_layer6 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 12, 228, 304)
 
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
@@ -332,12 +339,11 @@ class ResNet(nn.Module):
         return up_proj_block(in_channels, out_channels, oheight, owidth)
     
     def _make_post_process_layer(self):
-        return post_process.Affinity_Propagate(spn=True)
+        return post_process.Affinity_Propagate(24, 3)
     
     def forward(self, x):
         [batch_size, channel, height, width] = x.size()
         sparse_depth = x.narrow(1,3,1).clone()
-        
         x = self.conv1_1(x)
         skip4 = x
         
@@ -352,18 +358,16 @@ class ResNet(nn.Module):
         
         x = self.layer3(x)
         x = self.layer4(x)
-
         x = self.bn2(self.conv2(x))
         x = self.gud_up_proj_layer1(x)
-        
         x = self.gud_up_proj_layer2(x, skip2)
         x = self.gud_up_proj_layer3(x, skip3)
         x = self.gud_up_proj_layer4(x, skip4)
-        x= self.gud_up_proj_layer5(x)
         
         guidance = self.gud_up_proj_layer6(x)
-        x = self.post_process_layer(guidance, x, sparse_depth)
+        x= self.gud_up_proj_layer5(x)
         
+        x = self.post_process_layer(guidance, x, sparse_depth)
         return x
 
 
@@ -398,7 +402,7 @@ def resnet50(pretrained=False, **kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 6, 3], UpProj_Block, **kwargs)
     if pretrained:
-        print('==> Load pretrained model..')
+        print('==> Load pretrained model from ', model_path['resnet50'])
         pretrained_dict = torch.load(model_path['resnet50'])
         model.load_state_dict(update_model.update_model(model, pretrained_dict))
     return model
@@ -424,4 +428,3 @@ def resnet152(pretrained=False, **kwargs):
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['resnet152']))
     return model
-
