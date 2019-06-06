@@ -46,10 +46,12 @@ The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
 
 ## Results
 
+
 ## Citation
 
 If you use this method in your research, please cite:
 
+```
 @inproceedings{cheng2018depth,
   title={Depth estimation via affinity learned with convolutional spatial propagation network},
   author={Cheng, Xinjing and Wang, Peng and Yang, Ruigang},
@@ -57,3 +59,4 @@ If you use this method in your research, please cite:
   pages={103--119},
   year={2018}
 }
+```

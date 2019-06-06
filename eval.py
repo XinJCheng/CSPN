@@ -1,6 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-
 """
 Created on Fri Feb  2 19:16:42 2018
 
@@ -56,10 +53,10 @@ if args.model == 'cspn_unet':
         import torch_resnet_cspn_nyu as model
     elif args.data_set =='kitti':
         print("==> training model with cspn and unet on kitti")
-        import torch_resnet_cspn_kitti as model   
+        import torch_resnet_cspn_kitti as model
 else:
-    import torch_resnet as model    
-    
+    import torch_resnet as model
+
 use_cuda = torch.cuda.is_available()
 
 # global variable
@@ -70,26 +67,26 @@ print('==> Preparing data..')
 assert args.data_set in ['nyudepth', 'kitti']
 if args.data_set=='nyudepth':
     import eval_nyu_dataset_loader as dataset_loader
-    valset = dataset_loader.NyuDepthDataset(csv_file=args.eval_list, 
-                                            root_dir='.', 
-                                            split = 'val', 
-                                            n_sample = args.n_sample, 
+    valset = dataset_loader.NyuDepthDataset(csv_file=args.eval_list,
+                                            root_dir='.',
+                                            split = 'val',
+                                            n_sample = args.n_sample,
                                             input_format='hdf5')
 elif args.data_set =='kitti':
     import eval_kitti_dataset_loader as dataset_loader
-    valset = dataset_loader.KittiDataset(csv_file=args.eval_list, 
-                                         root_dir='.', 
-                                         split = 'val', 
-                                         n_sample = args.n_sample, 
+    valset = dataset_loader.KittiDataset(csv_file=args.eval_list,
+                                         root_dir='.',
+                                         split = 'val',
+                                         n_sample = args.n_sample,
                                          input_format='hdf5')
 else:
     print("==> input unknow dataset..")
 
-valloader = torch.utils.data.DataLoader(valset, 
-                                        batch_size=args.batch_size_eval, 
-                                        shuffle=False, 
-                                        num_workers=4, 
-                                        pin_memory=True, 
+valloader = torch.utils.data.DataLoader(valset,
+                                        batch_size=args.batch_size_eval,
+                                        shuffle=False,
+                                        num_workers=4,
+                                        pin_memory=True,
                                         drop_last=False)
 # Model
 print('==> Building model..')
@@ -100,25 +97,25 @@ elif args.data_set == 'kitti':
     net = model.resnet18()
 else:
     print("==> input unknow dataset..")
-    
+
 if True:
     # Load best model checkpoint.
     print('==> Resuming from best model..')
     best_model_path = os.path.join(args.best_model_dir, 'best_model.pth')
     assert os.path.isdir(args.best_model_dir), 'Error: no checkpoint directory found!'
     best_model_dict = torch.load(best_model_path)
-    best_model_dict = update_model.remove_moudle(best_model_dict)            
+    best_model_dict = update_model.remove_moudle(best_model_dict)
     net.load_state_dict(update_model.update_model(net, best_model_dict))
-    
+
 if use_cuda:
     net.cuda()
     net = torch.nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
     cudnn.benchmark = True
-    
+
 criterion = my_loss.Wighted_L1_Loss().cuda()
 
-optimizer = optim.SGD(net.parameters(), 
-                      lr=args.lr, 
+optimizer = optim.SGD(net.parameters(),
+                      lr=args.lr,
                       momentum=args.momentum,
                       weight_decay=args.weight_decay,
                       nesterov=args.nesterov,
@@ -130,18 +127,18 @@ def val(epoch):
     total_step_val = 0
     error_sum_val = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                      'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-                     'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0, 
-                     } 
+                     'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,
+                     }
     error_avg = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                  'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0, 
+                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,
                  }
     for batch_idx, sample in enumerate(valloader):
         [inputs, targets, raw_rgb] = [sample['rgbd'] , sample['depth'], sample['raw_rgb']]
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
         inputs, targets = Variable(inputs, volatile=True), Variable(targets)
-        outputs = net(inputs)      
+        outputs = net(inputs)
         loss = criterion(outputs, targets)
         targets = targets.data.cpu()
         outputs = outputs.data.cpu()
@@ -150,12 +147,12 @@ def val(epoch):
         error_result = utils.evaluate_error(gt_depth=targets, pred_depth=outputs)
 
         total_step_val += args.batch_size_eval
-        error_avg = utils.avg_error(error_sum_val, 
-                                    error_result, 
-                                    total_step_val, 
+        error_avg = utils.avg_error(error_sum_val,
+                                    error_result,
+                                    total_step_val,
                                     args.batch_size_eval)
-        utils.print_error('eval_result: step(average)', 
-                          epoch, batch_idx, 
+        utils.print_error('eval_result: step(average)',
+                          epoch, batch_idx,
                           loss, error_result, error_avg)
         utils.save_eval_img(args.data_set, args.best_model_dir, batch_idx,
                             inputs.data.cpu(), raw_rgb, targets, outputs)
@@ -164,6 +161,6 @@ def val(epoch):
 
 def eval_error():
     val(0)
-    
+
 eval_error()
 
