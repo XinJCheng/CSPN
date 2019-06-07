@@ -22,15 +22,21 @@ This code was tested with Python 3 and PyTorch 0.4.0.
 	```bash
 	sudo apt-get update
 	sudo apt-get install -y libhdf5-serial-dev hdf5-tools
-	pip3 install h5py matplotlib imageio scikit-image opencv-python
+	pip3 install h5py pandas matplotlib imageio scikit-image opencv-python
 	```
 - Download the preprocessed [NYU Depth V2](http://cs.nyu.edu/~silberman/datasets/nyu_depth_v2.html) and/or [KITTI Odometry](http://www.cvlibs.net/datasets/kitti/eval_odometry.php) dataset in HDF5 formats, and place them under the `data` folder. The downloading process might take an hour or so. The NYU dataset requires 32G of storage space, and KITTI requires 81G.
+- for NYU dataset
 	```bash
 	mkdir data; cd data
 	wget http://datasets.lids.mit.edu/sparse-to-dense/data/nyudepthv2.tar.gz
 	tar -xvf nyudepthv2.tar.gz && rm -f nyudepthv2.tar.gz
+    mv nyudepthv2 nyudepth_hdf5
+    ```
+- for KITTI dataset
+    ```bash
 	wget http://datasets.lids.mit.edu/sparse-to-dense/data/kitti.tar.gz
  	tar -xvf kitti.tar.gz && rm -f kitti.tar.gz
+    mv kitti kitti_hdf5
 	cd ..
 	```
 
@@ -44,7 +50,19 @@ The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
 - NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing)
 - KITTI: Pytorch model(coming soon)
 
-## Results
+Download it under  'output/${dataset}_pretrain_cspn/', where 'dataset' could be 'nyu' or 'kitti'
+
+
+## Testing
+- For NYU Depth
+```bash
+    bash eval_nyudepth_cspn.sh
+```
+
+You should able obtain our depth results close in the paper: 
+| Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|'NYU'| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
 
 
 ## Citation

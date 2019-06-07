@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 """
 Created on Thu Feb  1 18:07:52 2018
 
@@ -27,7 +25,7 @@ imagenet_eigvec = np.array([[-0.5675,  0.7192,  0.4009],
                             [-0.5836, -0.6948,  0.4203]], dtype=np.float32)
 
 class KittiDataset(Dataset):
-    # nyu depth dataset 
+    # nyu depth dataset
     def __init__(self, csv_file, root_dir, split, n_sample=500, input_format = 'img'):
         """
         Args:
@@ -41,7 +39,7 @@ class KittiDataset(Dataset):
         self.split = split
         self.input_format = input_format
         self.n_sample = n_sample
-    
+
     def __len__(self):
         return len(self.rgbd_frame)
 
@@ -52,12 +50,12 @@ class KittiDataset(Dataset):
                                     self.rgbd_frame.iloc[idx, 0])
             with open(rgb_name, 'rb') as fRgb:
                 rgb_image = Image.open(rgb_name).convert('RGB')
-            
+
             depth_name = os.path.join(self.root_dir,
                                       self.rgbd_frame.iloc[idx, 1])
             with open(depth_name, 'rb') as fDepth:
                 depth_image = Image.open(depth_name)
-                
+
         # read input hdf5
         elif self.input_format == 'hdf5':
             file_name = os.path.join(self.root_dir,
@@ -68,7 +66,7 @@ class KittiDataset(Dataset):
         else:
             print('error: the input format is not supported now!')
             return None
-        
+
         _s = np.random.uniform(1.0, 1.5)
         degree = np.random.uniform(-5.0, 5.0)
         if self.split == 'train':
@@ -88,13 +86,13 @@ class KittiDataset(Dataset):
             if np.random.uniform()<0.5:
                 rgb_image = rgb_image.transpose(Image.FLIP_LEFT_RIGHT)
                 depth_image = depth_image.transpose(Image.FLIP_LEFT_RIGHT)
-            
+
             rgb_image = transforms.ToTensor()(rgb_image)
             if self.input_format == 'img':
                 depth_image = transforms.ToTensor()(depth_image)
             else:
                 depth_image = data_transform.ToTensor()(depth_image)
-            depth_image = depth_image.div(_s)           
+            depth_image = depth_image.div(_s)
             sparse_image = self.createSparseDepthImage(depth_image, self.n_sample)
             rgbd_image = torch.cat((rgb_image, sparse_image), 0)
             sample = {'rgbd': rgbd_image, 'depth': depth_image}
@@ -107,7 +105,7 @@ class KittiDataset(Dataset):
                                            transforms.ToPILImage()])
 
             tDepth = data_transform.Compose([data_transform.Crop(10, 1210, 130, 370),
-                                             transforms.CenterCrop((228, 912))])           
+                                             transforms.CenterCrop((228, 912))])
             rgb_raw = tDepth(rgb_image)
             rgb_image = tRgb(rgb_image)
             depth_image = tDepth(depth_image)
@@ -119,11 +117,11 @@ class KittiDataset(Dataset):
                 depth_image = data_transform.ToTensor()(depth_image)
             sparse_image = self.createSparseDepthImage(depth_image, self.n_sample)
             rgbd_image = torch.cat((rgb_image, sparse_image), 0)
-            
+
             sample = {'rgbd': rgbd_image, 'depth': depth_image, 'raw_rgb': rgb_raw }
-        
+
         return sample
-    
+
     def createSparseDepthImage(self, depth_image, n_sample):
         random_mask = torch.zeros(1, depth_image.size(1), depth_image.size(2))
         n_pixels = depth_image.size(1) * depth_image.size(2)

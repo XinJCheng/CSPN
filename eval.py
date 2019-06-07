@@ -37,8 +37,8 @@ parser.add_argument('--batch_size_eval', default=1, type=int, help='batch size f
 #data directory
 parser.add_argument('--save_dir', default='result/base_line', type=str, help='result save directory')
 parser.add_argument('--best_model_dir', default='result/base_line', type=str, help='best model load directory')
-parser.add_argument('--train_list', default='data/nyudepth_hdf5/nyudepth_hdf5_train.csv', type=str, help='train data lists')
-parser.add_argument('--eval_list', default='data/nyudepth_hdf5/nyudepth_hdf5_val.csv', type=str, help='eval data list')
+parser.add_argument('--train_list', default='datalist/nyudepth_hdf5_train.csv', type=str, help='train data lists')
+parser.add_argument('--eval_list', default='datalist/nyudepth_hdf5_val.csv', type=str, help='eval data list')
 parser.add_argument('--model', default='base_model', type=str, help='model for net')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 parser.add_argument('--pretrain', '-p', action='store_true', help='load pretrained resnet model')
