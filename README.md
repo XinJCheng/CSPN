@@ -60,6 +60,7 @@ Download it under  'output/${dataset}_pretrain_cspn/', where 'dataset' could be 
 ```
 
 You should able obtain our depth results close in the paper: 
+
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |'NYU'| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
