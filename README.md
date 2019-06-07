@@ -50,7 +50,7 @@ The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
 - NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing)
 - KITTI: Pytorch model(coming soon)
 
-Download it under  'output/${dataset}_pretrain_cspn/', where 'dataset' could be 'nyu' or 'kitti'
+Download it under  `output/${dataset}_pretrain_cspn/`, where `dataset` could be `nyu` or `kitti`
 
 
 ## Testing
@@ -63,7 +63,7 @@ You should able obtain our depth results close in the paper:
 
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|'NYU'| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
+|`NYU`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
 
 
 ## Citation
