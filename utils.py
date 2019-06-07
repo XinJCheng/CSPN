@@ -1,4 +1,3 @@
-#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on Sat Feb  3 16:27:01 2018
@@ -23,7 +22,7 @@ def evaluate_error(gt_depth, pred_depth):
     batch_size = gt_depth.size(0)
     error = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
              'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-             'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0, 
+             'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,
              }
     _pred_depth = pred_depth[depth_mask]
     _gt_depth   = gt_depth[depth_mask]
@@ -41,7 +40,7 @@ def evaluate_error(gt_depth, pred_depth):
         max_ratio = max_of_two(y_over_z, z_over_y)
         error['DELTA1.02'] = torch.sum(max_ratio < 1.02).numpy()/float(n_valid_element)
         error['DELTA1.05'] = torch.sum(max_ratio < 1.05).numpy()/float(n_valid_element)
-        error['DELTA1.10'] = torch.sum(max_ratio < 1.10).numpy()/float(n_valid_element)        
+        error['DELTA1.10'] = torch.sum(max_ratio < 1.10).numpy()/float(n_valid_element)
         error['DELTA1.25'] = torch.sum(max_ratio < 1.25).numpy()/float(n_valid_element)
         error['DELTA1.25^2'] = torch.sum(max_ratio < 1.25**2).numpy()/float(n_valid_element)
         error['DELTA1.25^3'] = torch.sum(max_ratio < 1.25**3).numpy()/float(n_valid_element)
@@ -51,14 +50,14 @@ def evaluate_error(gt_depth, pred_depth):
 def avg_error(error_sum, error_step, total_step, batch_size):
     error_avg = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                  'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,}    
+                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,}
     for item, value in error_step.items():
         error_sum[item] += error_step[item] * batch_size
         error_avg[item] = error_sum[item]/float(total_step)
     return error_avg
-        
-        
-# print error    
+
+
+# print error
 def print_error(split, epoch, step, loss, error, error_avg):
     format_str = ('%s ===>\n\
                   Epoch: %d, step: %d, loss=%.4f\n\
@@ -85,14 +84,14 @@ def print_single_error(epoch, step, loss, error):
                          error['MSE'], error['RMSE'], error['MAE'],  error['ABS_REL'], \
                          error['DELTA1.02'], error['DELTA1.05'], error['DELTA1.10'], \
                          error['DELTA1.25'], error['DELTA1.25^2'], error['DELTA1.25^3']))
-    
+
 # update_best_model
 def updata_best_model(error_avg, best_RMSE):
     if error_avg['RMSE'] < best_RMSE:
         return True
     else:
         return False
-    
+
 # log best_model
 def log_file_folder_make(save_dir):
     if not os.path.isdir(save_dir):
@@ -103,14 +102,14 @@ def log_file_folder_make(save_dir):
                    DELTA1.02\t DELTA1.05\t DELTA1.10\t DELTA1.25\t \
                    DELTA1.25^2\t DELTA1.25^3\t ABS_REL\n')
     train_fd.close()
-    
+
     eval_log_file = os.path.join(save_dir, 'log_eval.txt')
     eval_fd = open(eval_log_file, 'w')
     eval_fd.write('epoch\t bestModel\t MSE\t RMSE\t MAE\t \
                   DELTA1.02\t DELTA1.05\t DELTA1.10\t \
                   DELTA1.25\t DELTA1.25^2\t DELTA1.25^3\t ABS_REL\n')
     eval_fd.close()
-    
+
 def log_result(save_dir, error_avg, epoch, lr, best_model, split):
     format_str = ('%.4f\t %.4f\t\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\n')
     train_log_file = os.path.join(save_dir, 'log_train.txt')
@@ -128,7 +127,7 @@ def log_result(save_dir, error_avg, epoch, lr, best_model, split):
                                   error_avg['MAE'], error_avg['DELTA1.02'], error_avg['DELTA1.05'],\
                                   error_avg['DELTA1.10'], error_avg['DELTA1.25'], error_avg['DELTA1.25^2'],\
                                   error_avg['DELTA1.25^3'], error_avg['ABS_REL']))
-        eval_fd.close()  
+        eval_fd.close()
 
 # log best_model
 def log_file_folder_make_lr(save_dir):
@@ -140,14 +139,14 @@ def log_file_folder_make_lr(save_dir):
                    DELTA1.02\t DELTA1.05\t DELTA1.10\t DELTA1.25\t \
                    DELTA1.25^2\t DELTA1.25^3\t ABS_REL\n')
     train_fd.close()
-    
+
     eval_log_file = os.path.join(save_dir, 'log_eval.txt')
     eval_fd = open(eval_log_file, 'w')
     eval_fd.write('epoch\t lr\t bestModel\t MSE\t RMSE\t MAE\t \
                   DELTA1.02\t DELTA1.05\t DELTA1.10\t DELTA1.25\t \
                   DELTA1.25^2\t DELTA1.25^3\t ABS_REL\n')
     eval_fd.close()
-    
+
 def log_result_lr(save_dir, error_avg, epoch, lr, best_model, split):
     format_str = ('%.4f\t %.4f\t %.4f\t\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\t %.4f\n')
     train_log_file = os.path.join(save_dir, 'log_train.txt')
@@ -165,21 +164,21 @@ def log_result_lr(save_dir, error_avg, epoch, lr, best_model, split):
                                   error_avg['MAE'], error_avg['DELTA1.02'], error_avg['DELTA1.05'],\
                                   error_avg['DELTA1.10'], error_avg['DELTA1.25'], error_avg['DELTA1.25^2'],\
                                   error_avg['DELTA1.25^3'], error_avg['ABS_REL']))
-        eval_fd.close()  
-        
-        
+        eval_fd.close()
+
+
 def un_normalize(tensor):
     img_mean = (0.485, 0.456, 0.406)
     img_std = (0.229, 0.224, 0.225)
     for t, m, s in zip(tensor, img_mean, img_std):
         t.mul_(s).add_(m)
     return tensor
-    
+
 def save_eval_img(data_set, model_dir, index, input_rgbd, input_rgb, gt_depth, pred_depth):
     img_save_folder = os.path.join(model_dir, 'eval_result')
     if not os.path.isdir(img_save_folder):
         os.makedirs(img_save_folder, 0o777)
-        
+
     save_name_rgb = os.path.join(img_save_folder, "%05d_input.png" % (index))
     save_name_gt = os.path.join(img_save_folder, "%05d_gt.png" % (index))
     save_name_pred = os.path.join(img_save_folder, "%05d_pred.png" % (index))
@@ -195,15 +194,15 @@ def save_eval_img(data_set, model_dir, index, input_rgbd, input_rgb, gt_depth, p
         save_pred = data_transform.ToPILImage()(torch.squeeze(pred_depth*1.0, 0))
         plt.imsave(save_name_rgb, save_rgb)
         plt.imsave(save_name_gt, save_gt)
-        plt.imsave(save_name_pred, save_pred)  
-        
+        plt.imsave(save_name_pred, save_pred)
+
     elif data_set == 'nyudepth':
         save_gt = data_transform.ToPILImage()(torch.squeeze(gt_depth*25.5, 0))
         save_pred = data_transform.ToPILImage()(torch.squeeze(pred_depth*25.5, 0))
         save_rgb.save(save_name_rgb)
         save_gt.save(save_name_gt)
-        save_pred.save(save_name_pred)    
-    
+        save_pred.save(save_name_pred)
+
 def test_eval_error():
     gt_depth = torch.abs(torch.randn(1,3,4))
     pred_depth = torch.abs(torch.randn(1,3,4))

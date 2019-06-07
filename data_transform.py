@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 """
 Created on Thu Feb  1 19:31:56 2018
 
@@ -25,7 +23,7 @@ try:
     import accimage
 except ImportError:
     accimage = None
-    
+
 '''Set of tranform random routines that takes both input and target as arguments,
 in order to have random but coherent transformations.
 inputs are PIL Image pairs and targets are ndarrays'''
@@ -34,11 +32,11 @@ inputs are PIL Image pairs and targets are ndarrays'''
     torchvision.transform function list:
         "Compose", "ToTensor", "ToPILImage", "Normalize", "Resize", "Scale", "CenterCrop", "Pad",
         "Lambda", "RandomCrop", "RandomHorizontalFlip", "RandomVerticalFlip", "RandomResizedCrop",
-        "RandomSizedCrop", "FiveCrop", "TenCrop", "LinearTransformation", "ColorJitter", 
+        "RandomSizedCrop", "FiveCrop", "TenCrop", "LinearTransformation", "ColorJitter",
         "RandomRotation", "Grayscale", "RandomGrayscale"
-        
+
     my own transform function list:
-        ToTensor(without div(255)), ColorNormalize, DepthNormalize, Scale, CenterCropRectangle, 
+        ToTensor(without div(255)), ColorNormalize, DepthNormalize, Scale, CenterCropRectangle,
 '''
 
 def _is_pil_image(img):
@@ -139,7 +137,7 @@ class ToPILImage(object):
     def __repr__(self):
         return self.__class__.__name__ + '({0})'.format(self.mode)
 
-    
+
 def to_tensor(pic):
     """Convert a ``PIL Image`` or ``numpy.ndarray`` to tensor.
     See ``ToTensor`` for more details.
@@ -186,7 +184,7 @@ def to_tensor(pic):
     if isinstance(img, torch.ByteTensor):
         return img.float()
     else:
-        return img   
+        return img
 
 
 def un_normalize(tensor, mean, std):
@@ -204,7 +202,7 @@ def un_normalize(tensor, mean, std):
     # TODO: make efficient
     for t, m, s in zip(tensor, mean, std):
         t.mul_(s).add_(m)
-    return tensor    
+    return tensor
 
 class Un_Normalize(object):
     """Normalize an tensor image with mean and standard deviation.
@@ -231,9 +229,9 @@ class Un_Normalize(object):
 
     def __repr__(self):
         return self.__class__.__name__ + '(mean={0}, std={1})'.format(self.mean, self.std)
-    
+
 class Compose(object):
-    
+
     """ Composes several co_transforms together.
     For example:
     >>> co_transforms.Compose([
@@ -296,7 +294,7 @@ class Crop(object):
 
 
 
-    
+
 class ColorNormalize(object):
     def __init__(self, mean, std):
         self.mean = mean
@@ -311,7 +309,7 @@ class ColorNormalize(object):
             input_image[i] = torch.add(input_image[i], self.mean[i])
             input_image[i] = torch.div(input_image[i], self.std[i])
         return input_image
-    
+
 class DepthNormalize(object):
     def __init__(self, mean, std):
         self.mean = mean
@@ -357,7 +355,7 @@ def resize(img, size, interpolation=Image.BILINEAR):
             return img.resize((ow, oh), interpolation)
     else:
         return img.resize(size[::-1], interpolation)
-    
+
 class Resize(object):
     """Resize the input PIL Image to the given size.
     Args:
@@ -384,7 +382,7 @@ class Resize(object):
         """
         return resize(img, self.size, self.interpolation)
 
-    
+
 class Scale(object):
     #Scales the smaller edge to size
     def __init__(self, size, interpolation='bicubic'):
@@ -401,7 +399,7 @@ class Scale(object):
             self.order = 0
         else:
             self.order = 1
-        
+
     def __call__(self, input_image):
         h, w = input_image.shape[:2]
         if isinstance(self.output_size, int):
@@ -444,16 +442,16 @@ class RandomHorizontalFlip_rgbd(object):
 
         if not _is_pil_image(depth):
             raise TypeError('img should be PIL Image. Got {}'.format(type(depth)))
-        
+
         if np.random.uniform() < 0.5:
             img = img.transpose(Image.FLIP_LEFT_RIGHT)
             depth = depth.transpose(Image.FLIP_LEFT_RIGHT)
-            
+
         return img, depth
 
     def __repr__(self):
         return self.__class__.__name__ + '()'
-    
+
 class Rotation(object):
     """Rotate the image by angle.
     Args:
@@ -488,7 +486,7 @@ class Rotation(object):
 
         if not _is_pil_image(img):
             raise TypeError('img should be PIL Image. Got {}'.format(type(img)))
-    
+
         return img.rotate(self.degrees, self.resample, self.expand, self.center)
 
     def __repr__(self):
