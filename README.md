@@ -42,15 +42,16 @@ This code was tested with Python 3 and PyTorch 0.4.0.
 
 ## Models
 
-The pretrained models, resnet18 and resnet50 can be downloaded here, and please put it into **pretrained** folder, if this folder doesnot exit, please run **mkdir pretrained** in root folder:
+The pretrained models, resnet18 and resnet50 can be downloaded here, and please put it into **pretrained** folder, if this folder does not exit, please run **mkdir pretrained** in root folder:
 - Resnet 18: [Pytorch model](https://drive.google.com/file/d/17adZHo5dkcU8_M_6OvYzGUTDguF6k-Qu/view?usp=sharing)
 - Resnet 50: [Pytorch model](https://drive.google.com/file/d/1-jSYATFPmyXoV0Qte6kLK-CD2nTtjNlD/view?usp=sharing)
 
 The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
-- NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing)
+- NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing) (Abandoned)
+- NYU Depth V2 (Fast Unpool): [Pytorch model](https://drive.google.com/file/d/1MM_ZPsB2Bb3c_D3cD-rLJta3Qo7A7i50/view?usp=sharing)
 - KITTI: Pytorch model(coming soon)
 
-Download it under  'output/${dataset}_pretrain_cspn/', where 'dataset' could be 'nyu' or 'kitti'
+Download it under  `output/${dataset}_pretrain_cspn/`, where `dataset` could be `nyu` or `kitti`
 
 
 ## Testing
@@ -60,9 +61,11 @@ Download it under  'output/${dataset}_pretrain_cspn/', where 'dataset' could be 
 ```
 
 You should able obtain our depth results close in the paper: 
+
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|'NYU'| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
+|`NYU`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
+|`NYU(Fast Unpool)`| 0.1175| 0.0162 | 0.8290 | 0.9341 | 0.9704|
 
 
 ## Citation
