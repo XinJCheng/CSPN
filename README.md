@@ -68,6 +68,15 @@ You should able obtain our depth results close in the paper:
 |`NYU(Fast Unpool)`| 0.1175| 0.0162 | 0.8290 | 0.9341 | 0.9704|
 
 
+## Training
+- For NYU Depth
+```bash
+    bash train_cspn_nyu.sh
+```
+
+We train with Nvidia V100 GPU and it runs around 50min per epoch. After training 40 epoch you should be able to get results close to what we report above.
+
+
 ## Citation
 
 If you use this method in your research, please cite:
