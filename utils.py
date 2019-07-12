@@ -100,6 +100,7 @@ def updata_best_model(error_avg, best_RMSE):
 def log_file_folder_make(save_dir):
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir, 0o777)
+
     train_log_file = os.path.join(save_dir, 'log_train.txt')
     train_fd = open(train_log_file, 'w')
     train_fd.write('epoch\t bestModel\t MSE\t RMSE\t MAE\t \

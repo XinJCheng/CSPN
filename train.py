@@ -40,9 +40,11 @@ parser.add_argument('--momentum', default=0.9, type=float, help='sgd momentum')
 parser.add_argument('--weight_decay', default=1e-4, type=float, help='weight decay (L2 penalty)')
 parser.add_argument('--dampening', default=0.0, type=float, help='dampening for momentum')
 parser.add_argument('--nesterov', '-n', action='store_true', help='enables Nesterov momentum')
+parser.add_argument('--num_epoch', default=40, type=int, help='number of epoch for training')
+
 
 # batch size
-parser.add_argument('--batch_size_train', default=4, type=int, help='batch size for training')
+parser.add_argument('--batch_size_train', default=8, type=int, help='batch size for training')
 parser.add_argument('--batch_size_eval', default=1, type=int, help='batch size for eval')
 
 #data directory
@@ -57,6 +59,7 @@ parser.add_argument('--pretrain', '-p', action='store_true', help='load pretrain
 args = parser.parse_args()
 
 sys.path.append("./models")
+
 import update_model
 if args.model == 'cspn_unet':
     if args.data_set=='nyudepth':
@@ -149,6 +152,7 @@ if args.resume:
     best_model_dict = update_model.remove_moudle(best_model_dict)
     net.load_state_dict(update_model.update_model(net, best_model_dict))
 
+
 if use_cuda:
     net.cuda()
     net = torch.nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
@@ -187,7 +191,6 @@ def train(epoch):
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
-        tbar.set_description('Train loss: %.3f' % (train_loss / (i + 1)))
         error_str = 'Epoch: %d, loss=%.4f' % (epoch, train_loss / (batch_idx + 1))
         tbar.set_description(error_str)
 
@@ -226,6 +229,7 @@ def val(epoch):
     is_best_model = False
     net.eval()
     total_step_val = 0
+    eval_loss = 0.0
     error_sum_val = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                      'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
                      'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,}
@@ -249,10 +253,10 @@ def val(epoch):
         error_result = utils.evaluate_error(gt_depth=targets, pred_depth=outputs)
         total_step_val += args.batch_size_eval
         error_avg = utils.avg_error(error_sum_val, error_result, total_step_val, args.batch_size_eval)
-        if batch_idx % 500 == 0:
-            utils.print_error('eval_result: step(average)',
-                           epoch, batch_idx, loss, error_result, error_avg)
 
+    utils.print_error('eval_result: step(average)',
+                      epoch, batch_idx, loss,
+                      error_result, error_avg, print_out=True)
 
     #log best_model
     if utils.updata_best_model(error_avg, best_rmse):
@@ -271,6 +275,11 @@ def val(epoch):
     #updata lr
     scheduler.step(error_avg['MAE'], epoch)
 
-for epoch in range(0, 40):
-    train(epoch)
-    val(epoch)
+
+def train_val():
+    for epoch in range(0, args.num_epoch):
+        train(epoch)
+        val(epoch)
+
+if __name__ == '__main__':
+    train_val()
