@@ -120,6 +120,7 @@ class Affinity_Propagate(nn.Module):
         gate_wb = torch.cat((gate1_wb_cmb,gate2_wb_cmb,gate3_wb_cmb,gate4_wb_cmb,
                              gate5_wb_cmb,gate6_wb_cmb,gate7_wb_cmb,gate8_wb_cmb), 1)
 
+        # normalize affinity using their abs sum
         gate_wb_abs = torch.abs(gate_wb)
         abs_weight = self.sum_conv(gate_wb_abs)
 
