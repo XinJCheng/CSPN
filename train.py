@@ -42,6 +42,7 @@ parser.add_argument('--dampening', default=0.0, type=float, help='dampening for 
 parser.add_argument('--nesterov', '-n', action='store_true', help='enables Nesterov momentum')
 parser.add_argument('--num_epoch', default=40, type=int, help='number of epoch for training')
 
+#cspn parameters
 
 # batch size
 parser.add_argument('--batch_size_train', default=8, type=int, help='batch size for training')
@@ -155,6 +156,7 @@ if args.resume:
 
 if use_cuda:
     net.cuda()
+    assert torch.cuda.device_count() == 1, 'only support single gpu'
     net = torch.nn.DataParallel(net, device_ids=range(torch.cuda.device_count()))
     cudnn.benchmark = True
 

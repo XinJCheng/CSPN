@@ -18,7 +18,7 @@ from torch.autograd import Variable
 import utils
 import loss as my_loss
 
-parser = argparse.ArgumentParser(description='PyTorch Sparse To Dense Training')
+parser = argparse.ArgumentParser(description='PyTorch Sparse To Dense Evaluation')
 
 # net parameters
 parser.add_argument('--n_sample', default=200, type=int, help='sampled sparse point number')

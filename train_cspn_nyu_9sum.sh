@@ -1,5 +1,5 @@
 #!/bin/bash
-export CUDA_VISIBLE_DEVICES=2
+export CUDA_VISIBLE_DEVICES=1
 
 data_set="nyudepth"
 n_sample=500
@@ -10,7 +10,7 @@ model="cspn_unet"
 batch_size_train=8
 num_epoch_train=40
 batch_size_eval=1
-model_name=nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm
+model_name=nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_9norm
 save_dir="output/${model_name}"
 best_model_dir="output/${model_name}"
 
