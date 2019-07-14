@@ -1,5 +1,6 @@
 """
-@author: Xinjing Cheng
+@author: Xinjing Cheng & Peng Wang
+
 """
 
 import torch.nn as nn
@@ -12,16 +13,28 @@ import torch.nn.functional as F
 
 class Affinity_Propagate(nn.Module):
 
-    def __init__(self, prop_time,
+    def __init__(self,
+                 prop_time,
                  prop_kernel,
-                 norm_type='8sum_abs'):
+                 norm_type='8sum'):
         """
+
+        Inputs:
+            prop_time: how many steps for CSPN to perform
+            prop_kernel: the size of kernel (current only support 3x3)
             way to normalize affinity
+                '8sum': normalize using 8 surrounding neighborhood
+                '8sum_abs': normalization enforcing affinity to be positive
+                            This will lead the center affinity to be 0
         """
         super(Affinity_Propagate, self).__init__()
         self.prop_time = prop_time
         self.prop_kernel = prop_kernel
+        assert prop_kernel == 3, 'this version only support 8 (3x3 - 1) neighborhood'
+
         self.norm_type = norm_type
+        assert norm_type in ['8sum', '8sum_abs']
+
         self.in_feature = 1
         self.out_feature = 1
 
@@ -61,8 +74,6 @@ class Affinity_Propagate(nn.Module):
 
             if '8sum' in self.norm_type:
                 result_depth = (1.0 - gate_sum) * raw_depth_input + result_depth
-            elif '9sum' in self.norm_type:
-                result_depth = (1.0 - gate_sum) * result_depth + result_depth
             else:
                 raise ValueError('unknown norm %s' % self.norm_type)
 
@@ -126,10 +137,6 @@ class Affinity_Propagate(nn.Module):
 
         gate_wb = torch.div(gate_wb, abs_weight)
         gate_sum = self.sum_conv(gate_wb)
-
-        if '9sum' in self.norm_type:
-            abs_sum = torch.abs(1.0 - gate_sum) + 1.0
-            gate_wb = torch.div(gate_wb, abs_sum)
 
         gate_sum = gate_sum.squeeze(1)
         gate_sum = gate_sum[:, :, 1:-1, 1:-1]

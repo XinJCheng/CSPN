@@ -276,8 +276,13 @@ class Gudi_UpProj_Block_Cat(nn.Module):
         return out
 
 class ResNet(nn.Module):
-    def __init__(self, block, layers, up_proj_block):
+    def __init__(self, block, layers, up_proj_block, cspn_config=None):
         self.inplanes = 64
+        cspn_config_default = {'step': 24, 'kernel': 3, 'norm_type': '8sum'}
+        if not (cspn_config is None):
+            cspn_config_default.update(cspn_config)
+        print(cspn_config_default)
+
         super(ResNet, self).__init__()
         self.conv1_1 = nn.Conv2d(4, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
@@ -305,7 +310,7 @@ class ResNet(nn.Module):
                                                        int(self.mid_channel/8),
                                                        int(self.mid_channel/16))
         self.conv3 = nn.Conv2d(128, 1, kernel_size=3, stride=1, padding=1, bias=False)
-        self.post_process_layer = self._make_post_process_layer()
+        self.post_process_layer = self._make_post_process_layer(cspn_config_default)
         self.gud_up_proj_layer1 = self._make_gud_up_conv_layer(Gudi_UpProj_Block, 2048, 1024, 15, 19)
         self.gud_up_proj_layer2 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 1024, 512, 29, 38)
         self.gud_up_proj_layer3 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 512, 256, 57, 76)
@@ -336,8 +341,10 @@ class ResNet(nn.Module):
     def _make_gud_up_conv_layer(self, up_proj_block, in_channels, out_channels, oheight, owidth):
         return up_proj_block(in_channels, out_channels, oheight, owidth)
 
-    def _make_post_process_layer(self):
-        return post_process.Affinity_Propagate(24, 3, norm_type='8sum')
+    def _make_post_process_layer(self, cspn_config=None):
+        return post_process.Affinity_Propagate(cspn_config['step'],
+                                               cspn_config['kernel'],
+                                               norm_type=cspn_config['norm_type'])
 
     def forward(self, x):
         [batch_size, channel, height, width] = x.size()

@@ -1,4 +1,5 @@
 #!/bin/bash
+# use this only for local usage
 export CUDA_VISIBLE_DEVICES=2
 
 data_set="nyudepth"

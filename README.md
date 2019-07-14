@@ -1,6 +1,6 @@
 # Depth Estimation via Affinity Learned with Convolutional Spatial Propagation Network
 
-By Xinjing Cheng, Peng Wang and Ruigang Yang
+By Xinjing Cheng*, Peng Wang* and Ruigang Yang (*Equal contribution)
 
 ## Contents
 0. [Introduction](#introduction)
@@ -12,7 +12,10 @@ By Xinjing Cheng, Peng Wang and Ruigang Yang
 
 ## Introduction
 
-This repo contains the CNN models trained for depth completion from a RGB and sparse depth points, as described in the paper "[Depth Estimation via Affinity Learned with Convolutional Spatial Propagation Network](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinjing_Cheng_Depth_Estimation_via_ECCV_2018_paper.pdf)". The provided models are those that were used to obtain the results reported in the paper on the benchmark datasets NYU Depth v2 and KITTI for indoor and outdoor scenes respectively. Moreover, the provided code can be used for inference on arbitrary images. 
+This repo contains the CNN models trained for depth completion from a RGB and sparse depth points, as described in the paper "[Depth Estimation via Affinity Learned with Convolutional Spatial Propagation Network](http://openaccess.thecvf.com/content_ECCV_2018/papers/Xinjing_Cheng_Depth_Estimation_via_ECCV_2018_paper.pdf)". 
+The provided models are those that were used to obtain the results reported in the paper on the benchmark datasets NYU Depth v2 and KITTI for indoor and outdoor scenes respectively. Moreover, the provided code can be used for inference on arbitrary images. 
+
+Notice: there is a minor formulation error in the original paper, i.e. way to apply affinity kernel (please check code for details, we will rectify it in our journal submission.)
 
 ## Requirements
 
@@ -47,25 +50,34 @@ The pretrained models, resnet18 and resnet50 can be downloaded here, and please 
 - Resnet 50: [Pytorch model](https://drive.google.com/file/d/1-jSYATFPmyXoV0Qte6kLK-CD2nTtjNlD/view?usp=sharing)
 
 The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
+
 - NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing) (Abandoned)
-- NYU Depth V2 (Fast Unpool): [Pytorch model](https://drive.google.com/file/d/1MM_ZPsB2Bb3c_D3cD-rLJta3Qo7A7i50/view?usp=sharing)
+- NYU Depth V2 (Fast Unpool, pos): [Pytorch model](https://drive.google.com/file/d/1MM_ZPsB2Bb3c_D3cD-rLJta3Qo7A7i50/view?usp=sharing)
+- NYU Depth V2 (Fast Unpool, non-pos): [Pytorch model]()
 - KITTI: Pytorch model(coming soon)
 
-Download it under  `output/${dataset}_pretrain_cspn/`, where `dataset` could be `nyu` or `kitti`
+Download it under  `output/${dataset}_pretrain_cspn_${model_config}/`, where `dataset` could be `nyu` or `kitti`, 
+where `model_config` can be checked from `eval_nyudepth_cspn.sh`
 
 
 ## Testing
-- For NYU Depth
+- For NYU Depth v2
+
+Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity`. Download the model from above link and put it under `output/nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm`, then run, 
+
 ```bash
     bash eval_nyudepth_cspn.sh
 ```
 
-You should able obtain our depth results close in the paper: 
+You should able obtain our depth results close here: 
 
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-|`NYU`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
-|`NYU(Fast Unpool)`| 0.1175| 0.0162 | 0.8290 | 0.9341 | 0.9704|
+|`NYU(Slow Unpool, deprecated)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
+|`NYU(Fast Unpool, pos affinity)`| 0.1175 | 0.0162 | 0.8290 | 0.9341 | 0.9704|
+|`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9350 | 0.9706|
+
+Here, the `Slow Unpool` means we originally loop over the image for unpooling. the `Fast Unpool` means we use adopt transpose conv to implement the unpooling. `pos affinity` means we enforce the affinity to be positive, i.e. affinities are normalized in [0, 1). `non-pos affinity` means we allow negative affinity, i.e. affinity are normalized in (-1, 1). 
 
 
 ## Training
@@ -73,8 +85,7 @@ You should able obtain our depth results close in the paper:
 ```bash
     bash train_cspn_nyu.sh
 ```
-
-We train with Nvidia V100 GPU and it runs around 50min per epoch. After training 40 epoch you should be able to get results close to what we report above.
+We train with a Nvidia 1080Ti GPU,  and within 40 epochs you should be able to get results close to what we reported above.
 
 
 ## Citation
