@@ -5,9 +5,9 @@ By Xinjing Cheng*, Peng Wang* and Ruigang Yang (*Equal contribution)
 ## Contents
 0. [Introduction](#introduction)
 0. [Requirements](#requirements)
-0. [Quick Guide](#quick-guide)
 0. [Models](#models)
-0. [Results](#results)
+0. [Testing](#testing)
+0. [Training](#training)
 0. [Citation](#citation)
 
 ## Introduction
