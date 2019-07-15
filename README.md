@@ -51,9 +51,9 @@ The pretrained models, resnet18 and resnet50 can be downloaded here, and please 
 
 The trained models, namely **+UNet+CSPN** in the paper can be downloaded here:
 
-- NYU Depth V2: [Pytorch model](https://drive.google.com/file/d/11e_0dsZzSkIecJUZRzMbM-MmXS_5Ktm5/view?usp=sharing) (Abandoned)
+- NYU Depth V2: [Pytorch model]() (Deprecated, only results images are available)
 - NYU Depth V2 (Fast Unpool, pos): [Pytorch model](https://drive.google.com/file/d/1MM_ZPsB2Bb3c_D3cD-rLJta3Qo7A7i50/view?usp=sharing)
-- NYU Depth V2 (Fast Unpool, non-pos): [Pytorch model]()
+- NYU Depth V2 (Fast Unpool, non-pos): [Pytorch model](https://drive.google.com/open?id=1iJ-GzS9xm6IA07T0izjCvCMbP422ORks)
 - KITTI: Pytorch model(coming soon)
 
 Download it under  `output/${dataset}_pretrain_cspn_${model_config}/`, where `dataset` could be `nyu` or `kitti`, 
@@ -63,7 +63,8 @@ where `model_config` can be checked from `eval_nyudepth_cspn.sh`
 ## Testing
 - For NYU Depth v2
 
-Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity)`. Download the model from above link and put it under `output/nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm`, then run, 
+Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity)`. 
+Download the model from above link and put it under `output/nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm`, then run, 
 
 ```bash
     bash eval_nyudepth_cspn.sh
@@ -71,11 +72,11 @@ Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity)`. D
 
 You should able obtain our depth results close here: 
 
-| Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
-|:-:|:-:|:-:|:-:|:-:|:-:|
-|`NYU(Slow Unpool, deprecated)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
-|`NYU(Fast Unpool, pos affinity)`| 0.1178 | 0.0162 | 0.8290 | 0.9341 | 0.9704|
-|`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9350 | 0.9706|
+| Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 | Results |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|`NYU(Slow Unpool)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716| [Download](https://drive.google.com/open?id=1mPGil99_46eXK7w4hb-XHDUL-hTrKhXf) |
+|`NYU(Fast Unpool, pos affinity)`| 0.1178 | 0.0162 | 0.8290 | 0.9341 | 0.9704| [Download]() |
+|`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9350 | 0.9706| [Download](https://drive.google.com/open?id=1nJkxw_FopEtUt1XY0aGPZ-WlzF2o_KjA) |
 
 Here, the `Slow Unpool` means we originally loop over the image for unpooling. the `Fast Unpool` means we use adopt transpose conv to implement the unpooling. `pos affinity` means we enforce the affinity to be positive, i.e. affinities are normalized in [0, 1). `non-pos affinity` means we allow negative affinity, i.e. affinity are normalized in (-1, 1). 
 

@@ -99,7 +99,7 @@ print('==> Building model..')
 if args.data_set == 'nyudepth':
     net = model.resnet50(cspn_config=cspn_config)
 elif args.data_set == 'kitti':
-    net = model.resnet18()
+    net = model.resnet18(cspn_config=cspn_config)
 else:
     print("==> input unknow dataset..")
 

@@ -42,7 +42,9 @@ parser.add_argument('--dampening', default=0.0, type=float, help='dampening for 
 parser.add_argument('--nesterov', '-n', action='store_true', help='enables Nesterov momentum')
 parser.add_argument('--num_epoch', default=40, type=int, help='number of epoch for training')
 
-#cspn parameters
+# network parameters
+parser.add_argument('--cspn_step', default=24, type=int, help='steps of propagation')
+parser.add_argument('--cspn_norm_type', default='8sum', type=str, help='norm type of cspn')
 
 # batch size
 parser.add_argument('--batch_size_train', default=8, type=int, help='batch size for training')
@@ -77,6 +79,7 @@ use_cuda = torch.cuda.is_available()
 
 # global variable
 best_rmse = sys.maxsize  # best test rmse
+cspn_config = {'step': args.cspn_step, 'norm_type': args.cspn_norm_type}
 start_epoch = 0 # start from epoch 0 or last checkpoint epoch
 
 
@@ -137,9 +140,11 @@ utils.log_file_folder_make_lr(args.save_dir)
 print('==> Building model..')
 
 if args.data_set == 'nyudepth':
-    net = model.resnet50(pretrained = args.pretrain)
+    net = model.resnet50(pretrained = args.pretrain,
+                         cspn_config=cspn_config)
 elif args.data_set == 'kitti':
-    net = model.resnet18(pretrained = args.pretrain)
+    net = model.resnet18(pretrained = args.pretrain,
+                         cspn_config=cspn_config)
 else:
     print("==> input unknow dataset..")
 
