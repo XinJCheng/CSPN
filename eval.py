@@ -18,7 +18,7 @@ from torch.autograd import Variable
 import utils
 import loss as my_loss
 
-parser = argparse.ArgumentParser(description='PyTorch Sparse To Dense Training')
+parser = argparse.ArgumentParser(description='PyTorch Sparse To Dense Evaluation')
 
 # net parameters
 parser.add_argument('--n_sample', default=200, type=int, help='sampled sparse point number')
@@ -30,6 +30,10 @@ parser.add_argument('--momentum', default=0.9, type=float, help='sgd momentum')
 parser.add_argument('--weight_decay', default=1e-4, type=float, help='weight decay (L2 penalty)')
 parser.add_argument('--dampening', default=0.0, type=float, help='dampening for momentum')
 parser.add_argument('--nesterov', '-n', action='store_true', help='enables Nesterov momentum')
+
+# network parameters
+parser.add_argument('--cspn_step', default=24, type=int, help='steps of propagation')
+parser.add_argument('--cspn_norm_type', default='8sum', type=str, help='norm type of cspn')
 
 # batch size
 parser.add_argument('--batch_size_eval', default=1, type=int, help='batch size for eval')
@@ -49,10 +53,10 @@ sys.path.append("./models")
 import update_model
 if args.model == 'cspn_unet':
     if args.data_set=='nyudepth':
-        print("==> training model with cspn and unet on nyudepth")
+        print("==> evaluating model with cspn and unet on nyudepth")
         import torch_resnet_cspn_nyu as model
     elif args.data_set =='kitti':
-        print("==> training model with cspn and unet on kitti")
+        print("==> evaluating model with cspn and unet on kitti")
         import torch_resnet_cspn_kitti as model
 else:
     import torch_resnet as model
@@ -61,6 +65,7 @@ use_cuda = torch.cuda.is_available()
 
 # global variable
 best_rmse = sys.maxsize  # best test rmse
+cspn_config = {'step': args.cspn_step, 'norm_type': args.cspn_norm_type}
 
 # Data
 print('==> Preparing data..')
@@ -92,9 +97,9 @@ valloader = torch.utils.data.DataLoader(valset,
 print('==> Building model..')
 
 if args.data_set == 'nyudepth':
-    net = model.resnet50()
+    net = model.resnet50(cspn_config=cspn_config)
 elif args.data_set == 'kitti':
-    net = model.resnet18()
+    net = model.resnet18(cspn_config=cspn_config)
 else:
     print("==> input unknow dataset..")
 
@@ -127,12 +132,10 @@ def val(epoch):
     total_step_val = 0
     error_sum_val = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                      'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-                     'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,
-                     }
+                     'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0}
     error_avg = {'MSE':0, 'RMSE':0, 'ABS_REL':0, 'LG10':0, 'MAE':0,\
                  'DELTA1.02':0, 'DELTA1.05':0, 'DELTA1.10':0, \
-                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0,
-                 }
+                 'DELTA1.25':0, 'DELTA1.25^2':0, 'DELTA1.25^3':0}
     for batch_idx, sample in enumerate(valloader):
         [inputs, targets, raw_rgb] = [sample['rgbd'] , sample['depth'], sample['raw_rgb']]
         if use_cuda:

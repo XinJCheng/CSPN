@@ -1,7 +1,7 @@
 """
 Created on Thu Feb  1 19:31:56 2018
-
-@author: norbot
+@ author:  Xinjing Cheng
+@ email : chengxinjing@baidu.com
 """
 
 from __future__ import print_function, division

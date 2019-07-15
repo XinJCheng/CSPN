@@ -58,13 +58,13 @@ def avg_error(error_sum, error_step, total_step, batch_size):
 
 
 # print error
-def print_error(split, epoch, step, loss, error, error_avg):
+def print_error(split, epoch, step, loss, error, error_avg, print_out=False):
     format_str = ('%s ===>\n\
                   Epoch: %d, step: %d, loss=%.4f\n\
                   MSE=%.4f(%.4f)\tRMSE=%.4f(%.4f)\tMAE=%.4f(%.4f)\tABS_REL=%.4f(%.4f)\n\
                   DELTA1.02=%.4f(%.4f)\tDELTA1.05=%.4f(%.4f)\tDELTA1.10=%.4f(%.4f)\n\
                   DELTA1.25=%.4f(%.4f)\tDELTA1.25^2=%.4f(%.4f)\tDELTA1.25^3=%.4f(%.4f)\n')
-    print (format_str % (split, epoch, step, loss,\
+    error_str = format_str % (split, epoch, step, loss,\
                          error['MSE'], error_avg['MSE'], error['RMSE'], error_avg['RMSE'],\
                          error['MAE'], error_avg['MAE'], error['ABS_REL'], error_avg['ABS_REL'],\
                          error['DELTA1.02'], error_avg['DELTA1.02'], \
@@ -72,7 +72,11 @@ def print_error(split, epoch, step, loss, error, error_avg):
                          error['DELTA1.10'], error_avg['DELTA1.10'], \
                          error['DELTA1.25'], error_avg['DELTA1.25'], \
                          error['DELTA1.25^2'], error_avg['DELTA1.25^2'], \
-                         error['DELTA1.25^3'], error_avg['DELTA1.25^3']))
+                         error['DELTA1.25^3'], error_avg['DELTA1.25^3'])
+    if print_out:
+        print(error_str)
+    return error_str
+
 
 def print_single_error(epoch, step, loss, error):
     format_str = ('%s ===>\n\
@@ -96,6 +100,7 @@ def updata_best_model(error_avg, best_RMSE):
 def log_file_folder_make(save_dir):
     if not os.path.isdir(save_dir):
         os.makedirs(save_dir, 0o777)
+
     train_log_file = os.path.join(save_dir, 'log_train.txt')
     train_fd = open(train_log_file, 'w')
     train_fd.write('epoch\t bestModel\t MSE\t RMSE\t MAE\t \
