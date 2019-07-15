@@ -63,7 +63,7 @@ where `model_config` can be checked from `eval_nyudepth_cspn.sh`
 ## Testing
 - For NYU Depth v2
 
-Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity`. Download the model from above link and put it under `output/nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm`, then run, 
+Here we provide example for the model of `NYU(Fast Unpool, non-pos affinity)`. Download the model from above link and put it under `output/nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm`, then run, 
 
 ```bash
     bash eval_nyudepth_cspn.sh
@@ -74,7 +74,7 @@ You should able obtain our depth results close here:
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |`NYU(Slow Unpool, deprecated)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716|
-|`NYU(Fast Unpool, pos affinity)`| 0.1175 | 0.0162 | 0.8290 | 0.9341 | 0.9704|
+|`NYU(Fast Unpool, pos affinity)`| 0.1178 | 0.0162 | 0.8290 | 0.9341 | 0.9704|
 |`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9350 | 0.9706|
 
 Here, the `Slow Unpool` means we originally loop over the image for unpooling. the `Fast Unpool` means we use adopt transpose conv to implement the unpooling. `pos affinity` means we enforce the affinity to be positive, i.e. affinities are normalized in [0, 1). `non-pos affinity` means we allow negative affinity, i.e. affinity are normalized in (-1, 1). 
@@ -82,9 +82,13 @@ Here, the `Slow Unpool` means we originally loop over the image for unpooling. t
 
 ## Training
 - For NYU Depth
+
+You may set the configuration in `train_cspn_nyu.sh` and run, 
+
 ```bash
     bash train_cspn_nyu.sh
 ```
+
 We train with a Nvidia 1080Ti GPU,  and within 40 epochs you should be able to get results close to what we reported above.
 
 
