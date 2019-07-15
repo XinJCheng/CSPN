@@ -73,7 +73,7 @@ Download the model from above link and put it under `output/nyu_pretrain_cspn_1_
 You should able obtain our depth results close here: 
 
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 | Results |
-|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|:-|:-:|:-:|:-:|:-:|:-:|:-:|
 |`NYU(Slow Unpool)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716| [Download](https://drive.google.com/open?id=1mPGil99_46eXK7w4hb-XHDUL-hTrKhXf) |
 |`NYU(Fast Unpool, pos affinity)`| 0.1178 | 0.0162 | 0.8290 | 0.9341 | 0.9704| [Download]() |
 |`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9350 | 0.9706| [Download](https://drive.google.com/open?id=1nJkxw_FopEtUt1XY0aGPZ-WlzF2o_KjA) |
