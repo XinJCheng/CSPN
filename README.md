@@ -75,7 +75,7 @@ Run it multiple times and take mean, you should able obtain our depth results cl
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 | Results |
 |:-|:-:|:-:|:-:|:-:|:-:|:-:|
 |`NYU(Slow Unpool)`| 0.1165| 0.0159 | 0.8331 | 0.9366 | 0.9716| [Download](https://drive.google.com/open?id=1mPGil99_46eXK7w4hb-XHDUL-hTrKhXf) |
-|`NYU(Fast Unpool, pos affinity)`| 0.1174 | 0.0162 | 0.8312 | 0.9341 | 0.9704| [Download]() |
+|`NYU(Fast Unpool, pos affinity)`| 0.1169 | 0.0161 | 0.8300 | 0.9347 | 0.9708| [Download](https://drive.google.com/file/d/1WzL1jd5KVYfwY9Rds9WxjvOL1bhk-k4J/view?usp=sharing) |
 |`NYU(Fast Unpool, non-pos affinity)`| 0.1172 | 0.0160 | 0.8344 | 0.9351 | 0.9707| [Download](https://drive.google.com/open?id=1nJkxw_FopEtUt1XY0aGPZ-WlzF2o_KjA) |
 
 Here, the `Slow Unpool` means we originally loop over the image for unpooling. the `Fast Unpool` means we use adopt transpose conv to implement the unpooling. `pos affinity` means we enforce the affinity to be positive, i.e. affinities are normalized in [0, 1). `non-pos affinity` means we allow negative affinity, i.e. affinity are normalized in (-1, 1). 
