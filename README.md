@@ -70,7 +70,7 @@ Download the model from above link and put it under `output/nyu_pretrain_cspn_1_
     bash eval_nyudepth_cspn.sh
 ```
 
-You should able obtain our depth results close here: 
+Run it multiple times and take mean, you should able obtain our depth results close here (5 time average due to randomness of sampled sparse points): 
 
 | Data | RMSE | REL | DELTA1.02 | DELTA1.05 | DELTA1.10 | Results |
 |:-|:-:|:-:|:-:|:-:|:-:|:-:|
