@@ -1,17 +1,17 @@
 #!/bin/bash
 # use this only for local usage
-# export CUDA_VISIBLE_DEVICES=2
+# export CUDA_VISIBLE_DEVICES=1
 
-data_set="nyudepth"
+data_set="kitti"
 n_sample=500
-train_list="datalist/nyudepth_hdf5_train.csv"
-eval_list="datalist/nyudepth_hdf5_val.csv"
+train_list="datalist/kitti_hdf5_train.csv"
+eval_list="datalist/kitti_hdf5_val.csv"
 model="cspn_unet"
 
 batch_size_train=8
 num_epoch_train=40
 batch_size_eval=1
-model_name=nyu_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm
+model_name=kitti_pretrain_cspn_1_net_cp500_bs8_adlr_ep40_8norm
 save_dir="output/${model_name}"
 best_model_dir="output/${model_name}"
 

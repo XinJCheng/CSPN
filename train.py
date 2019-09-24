@@ -32,7 +32,7 @@ parser = argparse.ArgumentParser(description='PyTorch Sparse To Dense Training')
 
 # net parameters
 parser.add_argument('--n_sample', default=200, type=int, help='sampled sparse point number')
-parser.add_argument('--data_set', default='nyudepth', type=str, help='train dataset')
+parser.add_argument('--data_set', default='kitti', type=str, help='train dataset')
 
 # optimizer parameters
 parser.add_argument('--lr', default=0.01, type=float, help='learning rate')

@@ -1,0 +1,18 @@
+
+
+kitti:
+inputs.shape
+torch.Size([8, 4, 228, 912])
+targets.shape
+torch.Size([8, 1, 228, 912])
+
+
+error
+
+
+
+--------------
+
+nyudepth:
+inputs.shape
+torch.Size([8, 4, 228, 304])
