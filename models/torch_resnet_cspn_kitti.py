@@ -206,6 +206,7 @@ class Simple_Gudi_UpConv_Block_Last_Layer(nn.Module):
         return out
 
 class Gudi_UpProj_Block(nn.Module):
+    # oheight is output height, owidth is output width
     def __init__(self, in_channels, out_channels, oheight=0, owidth=0):
         super(Gudi_UpProj_Block, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=5, stride=1, padding=2, bias=False)
@@ -311,12 +312,12 @@ class ResNet(nn.Module):
                                                        int(self.mid_channel/16))
         self.conv3 = nn.Conv2d(128, 1, kernel_size=3, stride=1, padding=1, bias=False)
         self.post_process_layer = self._make_post_process_layer(cspn_config_default)
-        self.gud_up_proj_layer1 = self._make_gud_up_conv_layer(Gudi_UpProj_Block, 512, 256, 15, 19)
-        self.gud_up_proj_layer2 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 256, 128, 29, 38)
-        self.gud_up_proj_layer3 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 128, 64, 57, 76)
-        self.gud_up_proj_layer4 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 64, 64, 114, 152)
-        self.gud_up_proj_layer5 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 1, 228, 304)
-        self.gud_up_proj_layer6 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 8, 228, 304)
+        self.gud_up_proj_layer1 = self._make_gud_up_conv_layer(Gudi_UpProj_Block, 512, 256, 15, 58)
+        self.gud_up_proj_layer2 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 256, 128, 29, 114)
+        self.gud_up_proj_layer3 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 128, 64, 57, 228)
+        self.gud_up_proj_layer4 = self._make_gud_up_conv_layer(Gudi_UpProj_Block_Cat, 64, 64, 114, 456)
+        self.gud_up_proj_layer5 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 1, 228, 912)
+        self.gud_up_proj_layer6 = self._make_gud_up_conv_layer(Simple_Gudi_UpConv_Block_Last_Layer, 64, 8, 228, 912)
 
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
@@ -355,7 +356,7 @@ class ResNet(nn.Module):
         x = self.bn1(x)
         x = self.relu(x)
         x = self.maxpool(x)
-        x = self.layer1(x)
+        x = self.layer1(x) # TODO: figure out what layer is doing?
         skip3 = x
 
         x = self.layer2(x)
@@ -367,7 +368,7 @@ class ResNet(nn.Module):
         x = self.gud_up_proj_layer1(x)
         x = self.gud_up_proj_layer2(x, skip2)
         x = self.gud_up_proj_layer3(x, skip3)
-        x = self.gud_up_proj_layer4(x, skip4)
+        x = self.gud_up_proj_layer4(x, skip4) # skip4 should be [8, 32, 114, 456]
 
         guidance = self.gud_up_proj_layer6(x)
         x= self.gud_up_proj_layer5(x)
