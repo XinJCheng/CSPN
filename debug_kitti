@@ -6,6 +6,11 @@ torch.Size([8, 4, 228, 912])
 targets.shape
 torch.Size([8, 1, 228, 912])
 
+ResNet
+def Forward
+x = self.gud_up_proj_layer1(x)
+x.shape
+Out[2]: torch.Size([8, 512, 8, 29])
 
 error
 
@@ -16,3 +21,14 @@ error
 nyudepth:
 inputs.shape
 torch.Size([8, 4, 228, 304])
+x.shape
+Out[2]: torch.Size([8, 2048, 8, 10])
+
+skip2.shape
+Out[2]: torch.Size([8, 512, 29, 38])
+skip3.shape
+Out[3]: torch.Size([8, 256, 57, 76])
+skip4.shape
+Out[4]: torch.Size([8, 64, 114, 152])
+sparse_depth.shape
+Out[5]: torch.Size([8, 1, 228, 304])
