@@ -1,3 +1,18 @@
+# Kitti support for CSPN
+
+Fixed several bugs for CSPN and wrapped up for kitti dataset.
+
+ - Create the datalist:
+ ```sh
+ cd ~/CSPN/
+ cd ./datalist
+ python dataListGenerator.py your_h5_dataset_base_dir dataset_name
+ ```
+ where `dataset_name` is `kitti` or `nyudepth` here.
+ 
+ - run the `bash train_cspn_kitti.sh` to train on kitti dataset.
+
+---
 # Depth Estimation via Affinity Learned with Convolutional Spatial Propagation Network
 
 By Xinjing Cheng*, Peng Wang* and Ruigang Yang (*Equal contribution)
