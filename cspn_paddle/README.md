@@ -6,8 +6,10 @@ By Xinjing Cheng, Peng Wang and Ruigang Yang
 
 1. [Introduction](#introduction)
 2. [Requirements](#requirements)
-3. [Usage](#usage)
-4. [Citation](#citation)
+3. [Citation](#citation)
+
+<!---3. [Usage](#usage)
+4. [Citation](#citation)--->
 
 ## Introduction
 
@@ -25,7 +27,7 @@ All the codes are tested in the following environment:
 
 - Installation
 
-  - Download whl file. [Click here](https://doc-10-3k-docs.googleusercontent.com/docs/securesc/5icirufadec24a71100knsql6o90ch99/t5nho3uvd0o1icggsbe1rptle81vr81n/1571983200000/02713171495105692538/02713171495105692538/1YqkbflmadV_dLuKcpMlqoy-5mCrKmWDy?e=download).
+  - Download whl file. [Click here](https://drive.google.com/file/d/1YqkbflmadV_dLuKcpMlqoy-5mCrKmWDy/view?usp=sharing).
   - Install the package into python.
 
   ```bash
@@ -79,9 +81,9 @@ All the codes are tested in the following environment:
 
 --->
 
-## Usage
+<!---## Usage
 
-Coming soon.
+Coming soon.--->
 
 <!---
 
