@@ -65,11 +65,18 @@ All the codes are tested in the following environment:
   git clone https://github.com/XinJCheng/CSPN.git
   ```
 
-  - Run the demo.
+  - Run the demo for 2d cspn module.
 
   ```python
   cd ./CSPN/cspn_paddle
-  python demo.py
+  python demo.py --dimNum=2
+  ```
+
+  - Run the demo for 3d cspn module.
+
+  ```python
+  cd ./CSPN/cspn_paddle
+  python demo.py --dimNum=3
   ```
 
 <!---
