@@ -1,26 +1,30 @@
 '''
-    3d CSPN demo module
+    CSPN module demo
 '''
 
+import argparse
 import numpy as np
 import paddle.fluid as fluid
 
 
-class CSPN3D(object):
+class CSPN():
     '''
-        3d cspn class
+        cspn module
     '''
-    def __init__(self, prop_kernel=3, prop_step=24):
+    def __init__(self, dim_num, feat_chan, prop_kernel, prop_step):
+        self.dim_num = dim_num
+        self.feat_chan = feat_chan
         self.prop_kernel = prop_kernel
         self.prop_step = prop_step
 
-    def cspn3d(self, guide, feat):
+    def cspn(self, guide, feat):
         '''
-            3d cspn module
+            cspn func
         '''
         guide = fluid.layers.abs(guide)
         guide_num = guide.shape[1] // feat.shape[1]
-        layer_name = 'cspn3d_affinity_propagate'
+        expand_times = [1, guide_num, *([1] * self.dim_num)]
+        layer_name = 'cspn_affinity_propagate'
         if feat.shape[1] > 1:
             cspn_feat = list()
             for channel_ind in range(feat.shape[1]):
@@ -28,7 +32,7 @@ class CSPN3D(object):
                     guide, axes=[1], starts=[channel_ind * guide_num],
                     ends=[(channel_ind + 1) * guide_num])
                 normalizer = fluid.layers.reduce_sum(slice_guide, dim=1, keep_dim=True)
-                normalizer = fluid.layers.expand(normalizer, expand_times=[1, guide_num, 1, 1, 1])
+                normalizer = fluid.layers.expand(normalizer, expand_times=expand_times)
                 slice_guide = fluid.layers.elementwise_div(slice_guide, normalizer)
                 slice_feat = fluid.layers.slice(feat, axes=[1], starts=[channel_ind],
                                                 ends=[channel_ind + 1])
@@ -41,7 +45,7 @@ class CSPN3D(object):
             cspn_feat = fluid.layers.concat(cspn_feat, axis=1)
         else:
             normalizer = fluid.layers.reduce_sum(guide, dim=1, keep_dim=True)
-            normalizer = fluid.layers.expand(normalizer, expand_times=[1, guide_num, 1, 1, 1])
+            normalizer = fluid.layers.expand(normalizer, expand_times=expand_times)
             guide = fluid.layers.elementwise_div(guide, normalizer)
             for _ in range(self.prop_step):
                 feat = fluid.layers.affinity_propagate(
@@ -49,18 +53,22 @@ class CSPN3D(object):
             cspn_feat = feat
         return cspn_feat
 
-    def demo(self, batch_size=3, iter_num=20, feat_chan=1, map_shape=(48, 64, 128)):
+    def demo(self, batch_size=3, iter_num=20, map_shape=None):
         '''
             func to run demo
         '''
         # define net
-        assert len(map_shape) == 3, '3d map shape is required'
-        guide_chan = self.prop_kernel ** 3 - 1
-        guide_shape = [feat_chan * guide_chan, *map_shape]
+        if map_shape is None:
+            map_shape = [48, 64, 128][3 - self.dim_num:]
+        else:
+            assert len(map_shape) == self.dim_num, '{}d map shape is required'.format(self.dim_num)
+        guide_chan = self.prop_kernel ** self.dim_num - 1
+        guide_shape = [self.feat_chan * guide_chan, *map_shape]
         guide = fluid.layers.data(name='guide', shape=guide_shape)
-        feat_shape = [feat_chan, *map_shape]
+        feat_shape = [self.feat_chan, *map_shape]
         feat = fluid.layers.data(name='feat', shape=feat_shape, stop_gradient=False)
-        cspn_feat = self.cspn3d(guide, feat)
+        cspn_feat = self.cspn(guide, feat)
+        print(cspn_feat)
         output = fluid.layers.reduce_mean(cspn_feat)
         # define optim
         optim = fluid.optimizer.AdamOptimizer()
@@ -77,5 +85,13 @@ class CSPN3D(object):
             print('iter={:02}  out={:.4f}'.format(i, outs[0][0]))
 
 if __name__ == '__main__':
-    MODULE = CSPN3D()
+    PARSER = argparse.ArgumentParser()
+    PARSER.add_argument('--dimNum', choices=[2, 3], default=3, help='version of cspn module')
+    PARSER.add_argument('--featChan', type=int, default=1, help='#channels of feature')
+    PARSER.add_argument('--propKernel', choices=[3], default=3, help='kernel size for propagation')
+    PARSER.add_argument('--propStep', type=int, default=24, help='#steps to propagate')
+    ARGS = PARSER.parse_args()
+    MODULE = CSPN(
+        dim_num=ARGS.dimNum, feat_chan=ARGS.featChan,
+        prop_kernel=ARGS.propKernel, prop_step=ARGS.propStep)
     MODULE.demo()
