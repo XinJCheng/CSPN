@@ -67,21 +67,21 @@ All the codes are tested in the following environment:
 
   - Run the demo for 2d cspn module.
 
-  ```python
+  ```bash
   cd ./CSPN/cspn_paddle
   python demo.py --dimNum=2
   ```
 
   - Run the demo for 3d cspn module.
 
-  ```python
+  ```bash
   cd ./CSPN/cspn_paddle
   python demo.py --dimNum=3
   ```
 
   - Run the demo with user-specific settings.
 
-  ```python
+  ```bash
   cd ./CSPN/cspn_paddle
   python demo.py --featChan=2 --propKernel=3 --propStep=12
   ```
