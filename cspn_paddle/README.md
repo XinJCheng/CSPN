@@ -79,6 +79,13 @@ All the codes are tested in the following environment:
   python demo.py --dimNum=3
   ```
 
+  - Run the demo with user-specific settings.
+
+  ```python
+  cd ./CSPN/cspn_paddle
+  python demo.py --featChan=2 --propKernel=3 --propStep=12
+  ```
+
 <!---
 
 ## Data Preparation
