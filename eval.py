@@ -62,7 +62,7 @@ else:
     import torch_resnet as model
 
 use_cuda = torch.cuda.is_available()
-
+# use_cuda = False
 # global variable
 best_rmse = sys.maxsize  # best test rmse
 cspn_config = {'step': args.cspn_step, 'norm_type': args.cspn_norm_type}
@@ -90,7 +90,7 @@ else:
 valloader = torch.utils.data.DataLoader(valset,
                                         batch_size=args.batch_size_eval,
                                         shuffle=False,
-                                        num_workers=4,
+                                        num_workers=0,
                                         pin_memory=True,
                                         drop_last=False)
 # Model
@@ -157,6 +157,7 @@ def val(epoch):
         utils.print_error('eval_result: step(average)',
                           epoch, batch_idx,
                           loss, error_result, error_avg)
+        # print(outputs.shape)
         utils.save_eval_img(args.data_set, args.best_model_dir, batch_idx,
                             inputs.data.cpu(), raw_rgb, targets, outputs)
 
