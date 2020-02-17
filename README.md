@@ -11,7 +11,7 @@ Fixed several bugs for CSPN and wrapped up for kitti dataset.
  where `dataset_name` is `kitti` or `nyudepth` here.
  
  - run the `bash train_cspn_kitti.sh` to train on kitti dataset.
- - run the 'bash eval_kittidepth_cspn.sh' to evaluate on kitti dataset.
+ - run the `bash eval_kittidepth_cspn.sh` to evaluate on kitti dataset.
 
 ---
 # Depth Estimation via Affinity Learned with Convolutional Spatial Propagation Network
