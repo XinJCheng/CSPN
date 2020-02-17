@@ -198,9 +198,14 @@ def save_eval_img(data_set, model_dir, index, input_rgbd, input_rgb, gt_depth, p
         save_gt = data_transform.ToPILImage()(torch.squeeze(gt_depth*1.0, 0))
         save_pred = data_transform.ToPILImage()(torch.squeeze(pred_depth*1.0, 0))
         print("save_rgb shape: {}".format(input_rgb.shape))
-        plt.imsave(save_name_rgb, save_rgb)
-        plt.imsave(save_name_gt, save_gt)
-        plt.imsave(save_name_pred, save_pred)
+        save_rgb.save(save_name_rgb)
+        save_gt.save(save_name_gt)
+        save_pred.save(save_name_pred)
+        save_sparse_point.save(save_name_sparse_point)
+        save_sparse_mask.save(save_name_sparse_mask)
+        # plt.imsave(save_name_rgb, save_rgb)
+        # plt.imsave(save_name_gt, save_gt)
+        # plt.imsave(save_name_pred, save_pred)
 
     elif data_set == 'nyudepth':
         save_gt = data_transform.ToPILImage()(torch.squeeze(gt_depth*25.5, 0))
