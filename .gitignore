@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# CSV files
+*.csv
+
 # Distribution / packaging
 .Python
 build/
@@ -105,7 +108,7 @@ venv.bak/
 
 # others
 data/*
-*output*
-output/*
+output_old
+output_old/*
 pretrained/*
 

@@ -197,7 +197,7 @@ def save_eval_img(data_set, model_dir, index, input_rgbd, input_rgb, gt_depth, p
         save_sparse_mask = data_transform.ToPILImage()(input_rgbd[:,3,:,:].sign())
         save_gt = data_transform.ToPILImage()(torch.squeeze(gt_depth*1.0, 0))
         save_pred = data_transform.ToPILImage()(torch.squeeze(pred_depth*1.0, 0))
-        print("save_rgb shape: {}".format(input_rgb.shape))
+        # print("save_rgb shape: {}".format(input_rgb.shape))
         save_rgb.save(save_name_rgb)
         save_gt.save(save_name_gt)
         save_pred.save(save_name_pred)

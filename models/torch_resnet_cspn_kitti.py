@@ -370,8 +370,8 @@ class ResNet(nn.Module):
         x = self.gud_up_proj_layer3(x, skip3)
         x = self.gud_up_proj_layer4(x, skip4) # skip4 should be [8, 32, 114, 456]
 
-        guidance = self.gud_up_proj_layer6(x)
-        x= self.gud_up_proj_layer5(x)
+        guidance = self.gud_up_proj_layer6(x) # guidance
+        x = self.gud_up_proj_layer5(x) # blur depth
 
         x = self.post_process_layer(guidance, x, sparse_depth)
         return x
