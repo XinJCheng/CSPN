@@ -191,23 +191,50 @@ class Affinity_Propagate(nn.Module):
         '''
         left_bottom_pad = nn.ZeroPad2d((0,2,2,0))
         gate6_wb_cmb = left_bottom_pad(gate6_wb_cmb).unsqueeze(1)
-
+        '''
+        center_bottom_pad(a).unsqueeze(1)
+        Out[19]: 
+        tensor([[[0.0000, 0.0000, 0.0000, 0.0000, 0.0000]],
+                [[0.0000, 0.0000, 0.0000, 0.0000, 0.0000]],
+                [[0.0000, 0.5680, 0.8088, 0.0461, 0.0000]],
+                [[0.0000, 0.5188, 0.9142, 0.7045, 0.0000]],
+                [[0.0000, 0.3563, 0.7770, 0.1678, 0.0000]]])
+        '''
         center_bottom_pad = nn.ZeroPad2d((1,1,2,0))
         gate7_wb_cmb = center_bottom_pad(gate7_wb_cmb).unsqueeze(1)
-
+        '''
+        right_bottm_pad(a).unsqueeze(1)
+        Out[20]: 
+        tensor([[[0.0000, 0.0000, 0.0000, 0.0000, 0.0000]],
+                [[0.0000, 0.0000, 0.0000, 0.0000, 0.0000]],
+                [[0.0000, 0.0000, 0.5680, 0.8088, 0.0461]],
+                [[0.0000, 0.0000, 0.5188, 0.9142, 0.7045]],
+                [[0.0000, 0.0000, 0.3563, 0.7770, 0.1678]]])
+        '''
         right_bottm_pad = nn.ZeroPad2d((2,0,2,0))
         gate8_wb_cmb = right_bottm_pad(gate8_wb_cmb).unsqueeze(1)
-
+        '''
+        gate_wb.shape
+        Out[21]: torch.Size([1, 8, 1, 230, 914])
+        '''
         gate_wb = torch.cat((gate1_wb_cmb,gate2_wb_cmb,gate3_wb_cmb,gate4_wb_cmb,
                              gate5_wb_cmb,gate6_wb_cmb,gate7_wb_cmb,gate8_wb_cmb), 1)
 
         # normalize affinity using their abs sum
+        '''
+        sum will get all 8 direction sum of abs_weight:
+        abs_weight.shape
+        Out[25]: torch.Size([1, 1, 1, 230, 914])
+        '''
         gate_wb_abs = torch.abs(gate_wb)
         abs_weight = self.sum_conv(gate_wb_abs)
 
+        # normalize over 8 directions
         gate_wb = torch.div(gate_wb, abs_weight)
         gate_sum = self.sum_conv(gate_wb)
 
+        # so this basically move the image from center to 8 directions for 2 cells and add them up
+        # then divide, now it cut into the original image shape.
         gate_sum = gate_sum.squeeze(1)
         gate_sum = gate_sum[:, :, 1:-1, 1:-1]
 
