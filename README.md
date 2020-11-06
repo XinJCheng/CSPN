@@ -26,10 +26,11 @@ If you use this method in your research, please cite:
 ```
 
 ```
-@article{cheng2018learning,
+@article{cheng2019learning,
   title={Learning depth with convolutional spatial propagation network},
   author={Cheng, Xinjing and Wang, Peng and Yang, Ruigang},
-  journal={arXiv preprint arXiv:1810.02695},
-  year={2018}
+  journal={IEEE transactions on pattern analysis and machine intelligence},
+  year={2019},
+  publisher={IEEE}
 }
 ```
